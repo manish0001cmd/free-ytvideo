@@ -1,0 +1,12 @@
+{
+  "name": "yt-downloader-backend",
+  "version": "1.0.0",
+  "description": "Backend logic for YouTube video quality selection using Netlify Functions.",
+  "main": "functions/download.js",
+  "scripts": {
+    "start": "netlify dev"
+  },
+  "dependencies": {
+    "ytdl-core": "^4.11.5"
+  }
+}

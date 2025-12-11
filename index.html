@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>High Quality YouTube Downloader</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <script src='//libtl.com/sdk.js' data-zone='10309318' data-sdk='show_10309318'></script>
+</head>
+<body>
+    <div class="container">
+        <h1>YouTube Video Downloader</h1>
+        
+        <div id="input-section">
+            <input type="url" id="url-input" placeholder="Paste YouTube Link Here" required>
+            <button id="get-options-btn">Get Download Options</button>
+            <p id="message" class="hidden"></p>
+        </div>
+
+        <div id="quality-section" class="hidden">
+            <h2 id="video-title"></h2>
+            <h3>Select Quality to Unlock Download:</h3>
+            <div id="quality-options">
+                </div>
+        </div>
+
+        <div id="ad-download-section" class="hidden">
+            <h3>Step 2: Watch Ad to Unlock Download</h3>
+            <div id="ad-placeholder">
+                <button id="ad-trigger-btn">Watch Ad and Download</button>
+            </div>
+            
+            <div id="player-and-download" class="hidden">
+                <h4>Video Preview and Download Link:</h4>
+                <div id="video-player-container">
+                    </div>
+                <a id="final-download-btn" class="download-button" download>Download High Quality Video</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
