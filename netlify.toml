@@ -1,3 +1,14 @@
 [build]
   functions = "functions"
   publish = "."
+  # Set a custom build command to ensure functions are bundled properly
+  command = "npm install --prefix netlify/functions && npm run build" 
+  
+[functions]
+  # Specify Node version for stability (ytdl-core prefers 18 or above)
+  node_bundler = "esbuild"
+  node_version = "18"
+
+[build.environment]
+  # Optionally, you can set the cache dir to avoid frequent re-downloads
+  # YTDL_NO_UPDATE = "1"
