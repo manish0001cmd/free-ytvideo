@@ -8,6 +8,6 @@
     "build": "echo 'Building functions...'"
   },
   "dependencies": {
-    "ytdl-core": "^4.11.5"
+    "ytdl-core": "4.9.2"  // Version downgraded for better stability
   }
 }
