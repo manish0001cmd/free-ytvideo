@@ -4,7 +4,10 @@
   "description": "Backend logic for YouTube video quality selection using Netlify Functions.",
   "main": "functions/download.js",
   "scripts": {
-    "start": "netlify dev"
+    "start": "netlify dev",
+    "build": "echo 'Building functions...'" 
+    // We can use a simple echo since Netlify does the heavy lifting, 
+    // but the script needs to exist if the command calls it.
   },
   "dependencies": {
     "ytdl-core": "^4.11.5"
