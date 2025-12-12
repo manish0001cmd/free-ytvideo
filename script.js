@@ -27,6 +27,7 @@ const hideAllSections = () => {
     // Reset ad button state
     adTriggerBtn.disabled = false;
     adTriggerBtn.textContent = 'Watch Ad and Download';
+    adTriggerBtn.classList.remove('hidden');
 };
 
 // --- Step 1: Get Options from Backend ---
@@ -50,9 +51,13 @@ const getDownloadOptions = async () => {
         const data = await response.json();
 
         if (response.ok) {
-            showMessage(`Options found for: ${data.title}`, false);
-            currentVideoId = data.videoId;
-            displayQualityOptions(data.title, data.formats);
+            if (data.formats && data.formats.length > 0) {
+                 showMessage(`Options found for: ${data.title}`, false);
+                 currentVideoId = data.videoId;
+                 displayQualityOptions(data.title, data.formats);
+            } else {
+                 showMessage("No suitable MP4 formats found for this video.", true);
+            }
         } else {
             showMessage(`Error: ${data.error || 'Failed to get options.'}`, true);
         }
@@ -81,7 +86,7 @@ const displayQualityOptions = (title, formats) => {
 
 // --- Step 3: Handle Selection and Show Ad Button ---
 const handleDownloadSelection = (format) => {
-    // Save the selected format and URL
+    // Save the selected format and ITAG
     selectedFormat = format;
     
     // Hide Quality section, show Ad section
@@ -113,16 +118,25 @@ const triggerMonetagAd = () => {
             adTriggerBtn.textContent = 'Watch Ad and Download';
         });
     } else {
-        // Fallback if SDK fails to load
-        showMessage("Ad SDK failed to load. Unlocking download directly.", true);
+        // Fallback if SDK fails to load - should not happen if added correctly
+        showMessage("Ad SDK failed to load. Unlocking download directly (Fallback).", true);
         unlockDownloadLink(); 
     }
 };
 
-// --- Step 5: Unlock Download Link and Show Player ---
+// --- Step 5: Unlock Download Link and Show Player (New Logic Here) ---
 const unlockDownloadLink = () => {
+    if (!selectedFormat || !currentVideoId) {
+        showMessage("Internal error: Format or Video ID missing.", true);
+        return;
+    }
+    
+    // Generate the protected download URL using the NEW Netlify Function (get-download-url)
+    // This URL calls the function, which immediately redirects to the fresh YouTube link (Fixes 410 error).
+    const protectedDownloadUrl = `/.netlify/functions/get-download-url?videoId=${currentVideoId}&itag=${selectedFormat.itag}`;
+
     // Set the final download URL
-    finalDownloadBtn.href = selectedFormat.url;
+    finalDownloadBtn.href = protectedDownloadUrl;
     
     // Show download link and player
     adTriggerBtn.classList.add('hidden'); // Hide the ad button
@@ -130,9 +144,10 @@ const unlockDownloadLink = () => {
     adDownloadSection.querySelector('h3').textContent = "Download Unlocked!";
     showMessage(`Success! Your ${selectedFormat.quality} download is ready.`, false);
     
-    // Embed the video player for preview (Using YouTube Embed URL)
+    // Embed the video player for preview 
     const playerContainer = document.getElementById("video-player-container");
     if (currentVideoId) {
+        // We use the simple embed URL for the iframe
         playerContainer.innerHTML = `<iframe width="100%" height="315" src="https://www.youtube.com/embed/${currentVideoId}" frameborder="0" allowfullscreen></iframe>`;
     }
 };
