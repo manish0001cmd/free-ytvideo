@@ -5,9 +5,7 @@
   "main": "functions/download.js",
   "scripts": {
     "start": "netlify dev",
-    "build": "echo 'Building functions...'" 
-    // We can use a simple echo since Netlify does the heavy lifting, 
-    // but the script needs to exist if the command calls it.
+    "build": "echo 'Building functions...'"
   },
   "dependencies": {
     "ytdl-core": "^4.11.5"
