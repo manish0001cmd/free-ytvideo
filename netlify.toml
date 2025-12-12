@@ -1,14 +1,13 @@
 [build]
   functions = "functions"
   publish = "."
-  # Set a simple build command
   command = "npm install" 
   
 [functions]
   node_bundler = "esbuild"
-  # This section ensures that the bundling and node version are set correctly
-  external_node_modules = ["ytdl-core"] # Explicitly tell Netlify to bundle ytdl-core
+  # This external modules list is correct
+  external_node_modules = ["ytdl-core"] 
 
 [build.environment]
-  # Setting NODE_VERSION here is the standard way now
-  NODE_VERSION = "18"
+  # Forcing Node 14 for stability with older YTDL methods
+  NODE_VERSION = "14"
