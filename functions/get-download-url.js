@@ -1,17 +1,46 @@
-// functions/get-download-url.js
+const ytdl = require('ytdl-core');
 
-// ... (baaki code same) ...
+exports.handler = async (event) => {
+    if (event.httpMethod !== 'GET') {
+        return { statusCode: 405, body: 'Method Not Allowed' };
+    }
 
-        // Return a 302 Redirect to the fresh URL
+    const { videoId, itag } = event.queryStringParameters;
+
+    if (!videoId || !itag) {
+        return { statusCode: 400, body: 'Video ID or ITAG is missing.' };
+    }
+
+    try {
+        const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`;
+        
+        const info = await ytdl.getInfo(youtubeUrl);
+        const format = ytdl.chooseFormat(info.formats, { quality: itag });
+
+        if (!format || !format.url) {
+            return { statusCode: 404, body: 'Download link not found for selected quality.' };
+        }
+        
+        // --- NEW FIX: Encode Filename ---
+        const safeFilename = encodeURIComponent(info.videoDetails.title.replace(/[^\w\s-]/g, ''));
+        const filenameHeader = `attachment; filename*=UTF-8''${safeFilename}.${format.container}`;
+        // --- END NEW FIX ---
+
         return {
-            statusCode: 302, // <--- Yeh 302 hona chahiye
+            statusCode: 302,
             headers: {
-                // 'Location' header mein hum fresh URL daalte hain
                 'Location': format.url, 
-                // Suggest a filename to the browser
-                'Content-Disposition': `attachment; filename="${info.videoDetails.title.replace(/[^a-zA-Z0-9]/g, '_')}.${format.container}"`
+                // Using standard filename header (RFC 6266)
+                'Content-Disposition': filenameHeader 
             },
             body: '' 
         };
 
-// ... (baaki code same) ...
+    } catch (error) {
+        console.error("Redirect Error:", error.message);
+        return {
+            statusCode: 500,
+            body: 'Error generating fresh download link.'
+        };
+    }
+};
